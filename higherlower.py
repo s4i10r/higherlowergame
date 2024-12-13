@@ -9,8 +9,7 @@ import time
 
 f = Figlet(font="slant")
 
-print(f.renderText("Welcome to \n HIGHER LOWER"))
-
+print(f.renderText("Welcome to \nHIGHER LOWER"))
 
 def prepare_data():
 	"""
@@ -25,16 +24,16 @@ def prepare_data():
 		dict: the dataset
 	"""
 
-	dataset = dict()
+	dataset = list()
 
 	with open("data/stats.csv", mode="r") as csvfile:
 		reader = csv.DictReader(csvfile)
 		for row in reader:
-			dataset[row["Country"]] = row
+			dataset.append(row)
 	return dataset
 
 
-def shuffle_data(dataset:dict):
+def shuffle_data(dataset:list):
 	"""
 	shuffles the dataset based on the current time
 	(for studying purposes, instead of using random)
@@ -46,22 +45,21 @@ def shuffle_data(dataset:dict):
 		dict: the shuffled dataset
 	"""
 	# assign a seed to every country
-	for key in dataset:
+	for country in dataset:
 		time.sleep(0.003)
-		dataset[key]["seed"] = time.time_ns() % len(dataset)
+		dataset[country]["seed"] = time.time_ns() % len(dataset)
 	
 	# sort by the assigned seed
 	shuffle_data = {key: value for key, value in sorted(dataset.items(),
-													 key=lambda item: item[1]["seed"])}
+					key=lambda item: item[1]["seed"])}
+	
+	shuffle_data = sorted(dataset, key=lambda country: country["seed"])
 	
 	return shuffle_data
 
-
-print(shuffle_data(prepare_data()))
-
 		
 
-def game_loop(dataset:dict):
+def game_loop(dataset:list):
 	"""
 	higherlower game loop
 
@@ -71,8 +69,15 @@ def game_loop(dataset:dict):
 	Returns:
 		None
 	"""
-	if len(dataset) > 1:
-		pass
-	else:
-		return f.renderText("GAME \n OVER")
-	
+
+	left_country = dataset[0]
+	right_country = dataset[1]
+
+	running = True
+
+	while running:
+		print(left_country["Country"], "or", right_country["Country"])
+		running = False
+
+
+print(game_loop(prepare_data()))
