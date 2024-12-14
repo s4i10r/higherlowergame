@@ -8,6 +8,7 @@ import time
 
 
 f = Figlet(font="slant")
+s = Figlet(font="big")
 
 print(f.renderText("Welcome to \nHIGHER LOWER"))
 
@@ -45,16 +46,12 @@ def shuffle_data(dataset:list):
 		dict: the shuffled dataset
 	"""
 	# assign a seed to every country
-	for country in dataset:
+	for i in range(len(dataset)):
 		time.sleep(0.003)
-		dataset[country]["seed"] = time.time_ns() % len(dataset)
+		dataset[i]["seed"] = time.time_ns() % 122
 	
-	# sort by the assigned seed
-	shuffle_data = {key: value for key, value in sorted(dataset.items(),
-					key=lambda item: item[1]["seed"])}
-	
+	# sort by the assigned seed	
 	shuffle_data = sorted(dataset, key=lambda country: country["seed"])
-	
 	return shuffle_data
 
 		
@@ -70,14 +67,52 @@ def game_loop(dataset:list):
 		None
 	"""
 
-	left_country = dataset[0]
-	right_country = dataset[1]
 
 	running = True
 
 	while running:
-		print(left_country["Country"], "or", right_country["Country"])
-		running = False
+		dataset = shuffle_data(dataset)
+
+		left_country = dataset[0]
+		right_country = dataset[1]
+
+		print("Which countries population is greater?")
+		versus = f"{left_country["Country"]} VS {right_country["Country"]}"
+		print(s.renderText(versus))
+
+		left_count = left_country["Population 2024"]
+		right_count = right_country["Population 2024"]
+
+		if left_count > right_count:
+			winner = "left"
+		else:
+			winner = "right"
+
+
+		invalid_choice = True
+		
+		while invalid_choice:
+			choice = input("Your Choice (Enter 1 or 2): ")
+			match choice:
+				case "1":
+					invalid_choice = False
+				case "2":
+					invalid_choice = False
+				case _:
+					print("Invalid choice (only 1 or 2)")
+		
+		match (winner, choice):
+			case ("left", "1"):
+				print("THATS CORRECT!")
+			case ("right", "2"):
+				print("THATS CORRECT!")
+			case _:
+				print("OH NO SO WRONG!")
+		
+		left_count, right_count = left_country["Population 2024"], right_country["Population 2024"]
+		
+		dataset = shuffle_data(dataset)
+
 
 
 print(game_loop(prepare_data()))
