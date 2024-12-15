@@ -83,7 +83,7 @@ def game_loop(dataset:list):
 		left_count = left_country["Population 2024"]
 		right_count = right_country["Population 2024"]
 
-		if left_count > right_count:
+		if int(left_count) > int(right_count):
 			winner = "left"
 		else:
 			winner = "right"
@@ -109,10 +109,6 @@ def game_loop(dataset:list):
 			case _:
 				print("OH NO SO WRONG!")
 		
-		left_count, right_count = left_country["Population 2024"], right_country["Population 2024"]
-		
-		dataset = shuffle_data(dataset)
-
 
 
 print(game_loop(prepare_data()))
